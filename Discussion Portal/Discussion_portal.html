@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  <style>
+    body{
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+    .container{
+        display: flex;
+        /* flex-direction: column; */
+        align-items: stretch;
+    }
+    .heading{
+        background-color: darkslateblue;
+        height: 50px;
+        
+        color: white;
+    }
+    textarea{
+        width: 100%;
+        overflow: hidden;
+    }
+    .left{
+        height: 800px;
+        width: 45%;
+        overflow: auto;
+    }
+    .right{
+        
+        width: 45%;
+        overflow: hidden;
+        
+    }
+    .divider{
+        width: 1px;
+        background-color: #000;
+        margin: 0 10px;
+    }
+    .left, .right, .middle{
+        flex: 1;
+        padding: 20px;
+        border: 1px solid #ccc;
+    }
+
+    .responseBtn{
+        margin-left: 20px;
+    }
+    .Thques , .Thans{
+        width: 180px;
+    }
+    #thpostby{
+        width: 100px;
+    }
+    #ulist li{
+        margin:10px 0;
+        padding:10px;
+        border: 1px solid #ccc;
+        background-color: #f7f7f7;
+        border-radius: 5px;
+        box-shadow: 2px 2px 5px rgba(0, 0,0 ,0.1);
+        cursor: pointer;
+    }
+   
+#mytable {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+
+#mytable th, #mytable td {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+#mytable th {
+    background-color: #f2f2f2;
+    color: #333;
+    text-align: left;
+}
+
+#mytable tbody tr:nth-child(even) {
+    background-color: #f7f7f7;
+}
+
+#mytable tbody tr:hover {
+    background-color: #e0e0e0;
+}
+
+.right {
+    width: 45%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+    overflow: hidden; 
+}
+
+
+.right input[type="text"],
+.right textarea {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.right button {
+    background-color: darkcyan;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.right button:hover {
+    background-color: #008b8b; 
+}
+
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; 
+    }
+    .right, .middle {
+        width: 100%; 
+    }
+    .divider {
+        display: none; 
+    }
+}
+
+
+  </style>
+</head>
+<body>
+    <div class="heading">
+    <h2 >Discussion Portal</h2>
+</div>
+    <div class="container">
+
+        <section class="left" id="left">
+
+            <div class="searchQuestion">
+            <input type="search" id="searchInput" onkeyup="searchQuestions()" name="search" placeholder="Search...">
+           </div>
+
+           <div class="question-List">
+            <p id="noResultsMessage" style="display: none; color: red;">No results found.</p>
+             <ul id="ulist">
+              
+             </ul>            
+           </div>
+
+        </section>
+
+        <section class="middle">
+            <div class="quesResponse">
+                <h2>Response</h2>
+                <table border="1" id="mytable">
+                    <tr>
+                        <th id="thpostby">
+                            Post by :
+                        </th>
+                        <th class="Thques">
+                            Question
+                        </th>
+                        <th class="Thans">
+                            Answer
+                        </th>
+                    </tr>
+
+                </table>
+            </div>
+        </section>
+
+  <div class="divider"></div>
+        <section class="right">
+
+            <h1>Welcome to the Discussion Portal</h1>
+
+            <div id="displayArea"></div>
+
+            <input type="text" id="subject" placeholder="Subject">
+            <textarea placeholder="Question" cols="60" rows="8" id="question"></textarea>
+            <button type="button" onclick="addQuestion()" style="background-color: darkcyan;">Submit</button>
+             <div class="response">
+                
+                <textarea name="" id="quesdisable" id="" cols="20" rows="5"  disabled></textarea>
+
+                <br>
+            <input type="text" id="name" placeholder="Enter your name">
+            <textarea placeholder="answer" cols="60" rows="8" id="answer"></textarea>
+            <button type="button" onclick="addresponse()" style="background-color: darkcyan;">Submit</button>
+        </div>
+       
+        </div>
+    </section>
+    <script>
+
+// function searchQuestions() {
+//     var input = document.getElementById("searchInput").value.toLowerCase();
+//     var questions = document.querySelectorAll("#ulist li");
+
+//     for (var i = 0; i < questions.length; i++) {
+//         var questionText = questions[i].innerText.toLowerCase();
+//         if (questionText.includes(input)) {
+//             questions[i].style.display = "block";
+//         } else {
+//             questions[i].style.display = "none";
+//         }
+//     }
+// }
+function searchQuestions() {
+    var input = document.getElementById("searchInput").value.toLowerCase();
+    var questionItems = document.querySelectorAll(".question-item");
+    var noResultsMessage = document.getElementById("noResultsMessage");
+
+    var found = false;
+
+    for (var i = 0; i < questionItems.length; i++) {
+        var questionText = questionItems[i].innerText.toLowerCase();
+        if (questionText.includes(input)) {
+            questionItems[i].style.display = "block";
+            found = true;
+        } else {
+            questionItems[i].style.display = "none";
+        }
+    }
+
+    if (found) {
+        noResultsMessage.style.display = "none";
+    } else {
+        noResultsMessage.style.display = "block";
+    }
+}
+
+
+
+
+function HandleItemClick(question)
+{
+    var textarea=document.getElementById("quesdisable");
+    textarea.innerHTML=question;
+}
+
+
+function writeQuestionInResponseBox(ques,id)
+{
+    var question=document.getElementById(id);
+
+ var textarea=document.getElementById("quesdisable");
+ textarea.innerHTML=question.innerHTML;
+}
+
+
+function addresponse() {
+    const responceName = document.getElementById("name");
+    const responseAnswer = document.getElementById("answer");
+    const ques = document.getElementById("quesdisable");
+
+    const resName = responceName.value.trim();
+    const resAns = responseAnswer.value.trim();
+    const resQues = ques.value.trim();
+
+    if (resName === "" || resAns === "" || resQues === "") {
+        alert("Please select a question and write a response");
+        return;
+    }
+
+    const existingResponses = localStorage.getItem("responce");
+    let responceObject = [];
+
+    if (existingResponses) {
+        responceObject = JSON.parse(existingResponses);
+    }
+    
+    responceObject.push({
+        question: resQues,
+        name: resName,
+        answer: resAns
+    });
+
+    const responce = JSON.stringify(responceObject);
+    localStorage.setItem("responce", responce);
+
+    responceName.value = "";
+    responseAnswer.value = "";
+    ques.value = "";
+    var getTable = document.getElementById("mytable");
+    getTable.innerHTML = "";
+
+    viewResponse();
+
+}
+
+
+function addQuestion() {
+    const subjectInput = document.getElementById("subject");
+    const questionInput = document.getElementById("question");
+
+    const subjectValue = subjectInput.value.trim();
+    const questionValue = questionInput.value.trim();
+
+    if (subjectValue === "" || questionValue === "") {
+        alert("Please enter both subject and question");
+        return;
+    }
+
+    const existingQuestions = localStorage.getItem("questions");
+    let askQuestion = [];
+
+    if (existingQuestions) {
+        askQuestion = JSON.parse(existingQuestions);
+    }
+
+    const questionExists = askQuestion.some(item => item.question === questionValue);
+
+    if (questionExists) {
+        alert("This question already exists.");
+        return;
+    }
+
+    askQuestion.push({
+        subject: subjectValue,
+        question: questionValue
+    });
+
+    const questions = JSON.stringify(askQuestion);
+    localStorage.setItem("questions", questions);
+
+    subjectInput.value = "";
+    questionInput.value = "";
+
+    listOfQuestions();
+}
+
+
+function listOfQuestions() {
+    const myquestions = localStorage.getItem("questions");
+    const myarr = JSON.parse(myquestions);
+    var uList = document.getElementById("ulist");
+    var index=1;
+    uList.innerHTML = "";
+
+    if(myarr!==null)
+    {
+    for (var i = 0; i < myarr.length; i++) {
+
+        var container =document.createElement("div");
+        var newhead = document.createElement("li");
+        var newList = document.createElement("li");
+        var btn = document.createElement("button");
+       
+        
+        newList.innerHTML ="Ques.) " +myarr[i].question;
+        var dataques = myarr[i].question;
+        newList.setAttribute("id", "ques" + i);
+        newhead.setAttribute("id","ques"+i)
+        newhead.innerHTML =""+index+".) "+ myarr[i].subject;
+
+        container.appendChild(newhead);
+        container.appendChild(newList);
+        uList.appendChild(container).style.listStyle="none";
+
+        container.classList.add("question-item");
+
+        index++;
+       
+        newList.addEventListener("click", function()
+        {
+            HandleItemClick(this.textContent);
+        })
+        
+       
+    }
+}
+else
+{
+    console.log("your question section is empty")
+}
+}
+
+
+//viewResponse();
+function viewResponse() {
+    var getTable = document.getElementById("mytable");
+
+    var responseAnswer = localStorage.getItem("responce");
+    var resAns = JSON.parse(responseAnswer);
+    if(resAns!==null)
+    {
+    for (var i = 0; i < resAns.length; i++) {
+        var newRow = document.createElement("tr");
+
+        var tdname = document.createElement("td");
+        var tdquestion = document.createElement("td");
+        var tdAnswer = document.createElement("td");
+
+        tdname.innerHTML = resAns[i].name;
+        tdquestion.innerHTML = resAns[i].question;
+        tdAnswer.innerHTML = resAns[i].answer;
+
+        newRow.appendChild(tdname);
+        newRow.appendChild(tdquestion);
+        newRow.appendChild(tdAnswer);
+        
+      
+        getTable.appendChild(newRow);
+    }
+}
+else
+{
+    console.log("your respnse Section is Empty");
+}
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    viewResponse();
+    listOfQuestions();
+    
+});
+
+window.onload = function()
+{
+    listOfQuestions();
+}
+
+
+</script>
+
+
+</body>
+</html>
